@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Guest Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 40px; }
+        .header { background: #2c3e50; color: white; padding: 20px 30px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .cards { display: flex; gap: 20px; margin-top: 30px; flex-wrap: wrap; }
+        .card { background: white; padding: 30px; border-radius: 8px; width: 200px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-decoration: none; color: #2c3e50; }
+        .card:hover { background: #2c3e50; color: white; }
+        .card h3 { margin: 0; font-size: 1em; }
+        a.logout { color: white; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h2>Welcome, <span th:text="${guest.fullName}"></span></h2>
+    <a class="logout" href="/guest/logout">Logout</a>
+</div>
+<div class="cards">
+    <a href="/rooms/available" class="card"><h3>View Available Rooms</h3></a>
+    <a href="/reservations/book" class="card"><h3>Book a Room</h3></a>
+    <a href="/reservations/my" class="card"><h3>My Reservations</h3></a>
+    <a href="/payments/my" class="card"><h3>My Payments</h3></a>
+    <a href="/services/request" class="card"><h3>Service Request</h3></a>
+    <a href="/guest/profile" class="card"><h3>My Profile</h3></a>
+</div>
+</body>
+</html>

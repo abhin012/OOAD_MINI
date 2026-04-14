@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Guest Registration</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f5f5; display: flex; justify-content: center; padding-top: 60px; }
+        .card { background: white; padding: 40px; border-radius: 8px; width: 400px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { color: #2c3e50; margin-bottom: 24px; }
+        input { width: 100%; padding: 10px; margin: 8px 0 16px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #2c3e50; color: white; border: none; border-radius: 4px; font-size: 1em; cursor: pointer; }
+        .error { color: red; font-size: 0.9em; margin-bottom: 12px; }
+        a { color: #2c3e50; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h2>Guest Registration</h2>
+    <p th:if="${error}" class="error" th:text="${error}"></p>
+    <form method="post" action="/guest/register">
+        <label>First Name</label>
+        <input type="text" name="firstName" required/>
+        <label>Last Name</label>
+        <input type="text" name="lastName" required/>
+        <label>Email</label>
+        <input type="email" name="email" required/>
+        <label>Phone</label>
+        <input type="text" name="phone" required/>
+        <label>ID Proof Number</label>
+        <input type="text" name="idProof" required/>
+        <button type="submit">Register</button>
+    </form>
+    <br>
+    <p>Already registered? <a href="/guest/login">Login here</a></p>
+</div>
+</body>
+</html>
