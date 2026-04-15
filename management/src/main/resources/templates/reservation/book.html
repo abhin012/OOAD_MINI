@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Book a Room</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f5f5; display: flex; justify-content: center; padding-top: 60px; }
+        .card { background: white; padding: 40px; border-radius: 8px; width: 420px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { color: #2c3e50; }
+        select, input { width: 100%; padding: 10px; margin: 8px 0 16px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #2c3e50; color: white; border: none; border-radius: 4px; font-size: 1em; cursor: pointer; }
+        .error { color: red; font-size: 0.9em; }
+        a { color: #2c3e50; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h2>Book a Room</h2>
+    <p th:if="${error}" class="error" th:text="${error}"></p>
+    <form method="post" action="/reservations/book">
+        <label>Select Room</label>
+        <select name="roomId" required>
+            <option th:each="room : ${rooms}"
+                    th:value="${room.roomId}"
+                    th:text="${room.roomNumber + ' - ' + room.roomType + ' - Rs.' + room.pricePerNight}">
+            </option>
+        </select>
+        <label>Check-in Date</label>
+        <input type="date" name="checkIn" required/>
+        <label>Check-out Date</label>
+        <input type="date" name="checkOut" required/>
+        <label>Number of Nights</label>
+        <input type="number" name="nights" min="1" required/>
+        <label>Number of Guests</label>
+        <input type="number" name="numberOfGuests" min="1" required/>
+        <button type="submit">Confirm Booking</button>
+    </form>
+    <br><a href="/guest/dashboard">Back to Dashboard</a>
+</div>
+</body>
+</html>
