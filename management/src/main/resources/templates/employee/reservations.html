@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>All Reservations</title>
+    <style>
+        body{font-family:Arial,sans-serif;background:#f5f5f5;padding:40px;}
+        h2{color:#2c3e50;}
+        table{width:100%;border-collapse:collapse;background:white;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+        th{background:#2c3e50;color:white;padding:12px;text-align:left;}
+        td{padding:12px;border-bottom:1px solid #eee;font-size:0.95em;}
+        .CONFIRMED{background:#d5f5e3;color:#1e8449;padding:3px 8px;border-radius:10px;font-size:0.8em;}
+        .CHECKED_IN{background:#d6eaf8;color:#1a5276;padding:3px 8px;border-radius:10px;font-size:0.8em;}
+        .CHECKED_OUT{background:#f0f0f0;color:#555;padding:3px 8px;border-radius:10px;font-size:0.8em;}
+        .CANCELLED{background:#fadbd8;color:#c0392b;padding:3px 8px;border-radius:10px;font-size:0.8em;}
+        .CREATED{background:#fef9e7;color:#b7950b;padding:3px 8px;border-radius:10px;font-size:0.8em;}
+        .btn-in{background:#1a5276;color:white;padding:5px 12px;border:none;border-radius:4px;cursor:pointer;}
+        .btn-out{background:#1e8449;color:white;padding:5px 12px;border:none;border-radius:4px;cursor:pointer;}
+        a{color:#2c3e50;}
+    </style>
+</head>
+<body>
+    <h2>All Reservations</h2>
+    <table>
+        <tr><th>ID</th><th>Guest</th><th>Room</th><th>Check-in</th><th>Check-out</th><th>Nights</th><th>Status</th><th>Actions</th></tr>
+        <tr th:each="res : ${reservations}">
+            <td th:text="${res.reservationId}"></td>
+            <td th:text="${res.guestId}"></td>
+            <td th:text="${res.roomId}"></td>
+            <td th:text="${res.checkIn}"></td>
+            <td th:text="${res.checkOut}"></td>
+            <td th:text="${res.nights}"></td>
+            <td><span th:classappend="${res.status}" th:text="${res.status}"></span></td>
+            <td>
+                <form th:if="${res.status == 'CONFIRMED'}" method="post" action="/reservations/checkin" style="display:inline">
+                    <input type="hidden" name="reservationId" th:value="${res.reservationId}"/>
+                    <button class="btn-in" type="submit">Check In</button>
+                </form>
+                <form th:if="${res.status == 'CHECKED_IN'}" method="post" action="/reservations/checkout" style="display:inline">
+                    <input type="hidden" name="reservationId" th:value="${res.reservationId}"/>
+                    <button class="btn-out" type="submit">Check Out</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+    <br><a href="/employee/dashboard">Back to Dashboard</a>
+</body>
+</html>
