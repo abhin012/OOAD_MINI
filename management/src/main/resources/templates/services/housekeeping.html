@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Housekeeping Tasks</title>
+    <style>
+        body{font-family:Arial,sans-serif;background:#f5f5f5;padding:40px;}
+        h2{color:#2c3e50;}
+        .add-form{background:white;padding:24px;border-radius:8px;margin-bottom:24px;box-shadow:0 2px 8px rgba(0,0,0,0.1);display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;}
+        .add-form label{display:block;font-size:0.85em;color:#555;margin-bottom:4px;}
+        .add-form input,.add-form select{padding:9px;border:1px solid #ddd;border-radius:4px;min-width:160px;}
+        .add-form button{padding:9px 20px;background:#2c3e50;color:white;border:none;border-radius:4px;cursor:pointer;}
+        table{width:100%;border-collapse:collapse;background:white;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+        th{background:#2c3e50;color:white;padding:12px;text-align:left;}
+        td{padding:12px;border-bottom:1px solid #eee;}
+        .PENDING{background:#fef9e7;color:#b7950b;padding:4px 10px;border-radius:12px;font-size:0.85em;}
+        .COMPLETED{background:#d5f5e3;color:#1e8449;padding:4px 10px;border-radius:12px;font-size:0.85em;}
+        .btn-done{background:#1e8449;color:white;padding:5px 14px;border:none;border-radius:4px;cursor:pointer;}
+        a{color:#2c3e50;}
+    </style>
+</head>
+<body>
+    <h2>Housekeeping Tasks</h2>
+    <div class="add-form">
+        <form method="post" action="/employee/housekeeping/add" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+            <div>
+                <label>Room Number</label>
+                <input type="text" name="roomNumber" placeholder="e.g. 101" required/>
+            </div>
+            <div>
+                <label>Assign To</label>
+                <select name="assignedTo" required>
+                    <option th:each="s : ${staff}" th:value="${s.name}" th:text="${s.name}"></option>
+                </select>
+            </div>
+            <button type="submit">Add Task</button>
+        </form>
+    </div>
+    <table>
+        <tr><th>Task ID</th><th>Room</th><th>Assigned To</th><th>Date</th><th>Status</th><th>Action</th></tr>
+        <tr th:each="task : ${tasks}">
+            <td th:text="${task.taskId}"></td>
+            <td th:text="${task.roomNumber}"></td>
+            <td th:text="${task.assignedTo}"></td>
+            <td th:text="${task.assignedDate}"></td>
+            <td><span th:classappend="${task.status}" th:text="${task.status}"></span></td>
+            <td>
+                <form th:if="${task.status == 'PENDING'}" method="post" action="/employee/housekeeping/complete" style="display:inline">
+                    <input type="hidden" name="taskId" th:value="${task.taskId}"/>
+                    <button class="btn-done" type="submit">Mark Done</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+    <br><a href="/employee/dashboard">Back to Dashboard</a>
+</body>
+</html>

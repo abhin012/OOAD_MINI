@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>All Service Requests</title>
+    <style>
+        body{font-family:Arial,sans-serif;background:#f5f5f5;padding:40px;}
+        h2{color:#2c3e50;}
+        table{width:100%;border-collapse:collapse;background:white;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+        th{background:#2c3e50;color:white;padding:12px;text-align:left;}
+        td{padding:12px;border-bottom:1px solid #eee;}
+        .OPEN{background:#fef9e7;color:#b7950b;padding:4px 10px;border-radius:12px;font-size:0.85em;}
+        .RESOLVED{background:#d5f5e3;color:#1e8449;padding:4px 10px;border-radius:12px;font-size:0.85em;}
+        .btn{background:#1e8449;color:white;padding:5px 14px;border:none;border-radius:4px;cursor:pointer;}
+        a{color:#2c3e50;}
+    </style>
+</head>
+<body>
+    <h2>All Service Requests</h2>
+    <table>
+        <tr><th>ID</th><th>Guest</th><th>Type</th><th>Description</th><th>Date</th><th>Status</th><th>Action</th></tr>
+        <tr th:each="req : ${requests}">
+            <td th:text="${req.requestId}"></td>
+            <td th:text="${req.guestId}"></td>
+            <td th:text="${req.requestType}"></td>
+            <td th:text="${req.description}"></td>
+            <td th:text="${req.requestDate}"></td>
+            <td><span th:classappend="${req.status}" th:text="${req.status}"></span></td>
+            <td>
+                <form th:if="${req.status == 'OPEN'}" method="post" action="/services/resolve" style="display:inline">
+                    <input type="hidden" name="requestId" th:value="${req.requestId}"/>
+                    <button class="btn" type="submit">Resolve</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+    <br><a href="/employee/dashboard">Back to Dashboard</a>
+</body>
+</html>
