@@ -92,3 +92,7 @@ INSERT INTO rooms VALUES ('R002','102',1,'Standard Double',2000,'AVAILABLE');
 INSERT INTO rooms VALUES ('R003','201',2,'Deluxe Double',3000,'AVAILABLE');
 INSERT INTO rooms VALUES ('R004','202',2,'Deluxe Suite',4500,'AVAILABLE');
 INSERT INTO rooms VALUES ('R005','301',3,'Presidential Suite',8000,'AVAILABLE');
+
+show databases;
+USE hotel_management;
+SELECT * FROM guests ORDER BY guest_id DESC;
