@@ -3,38 +3,104 @@
 <head>
     <title>Book a Room</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f5f5f5; display: flex; justify-content: center; padding-top: 60px; }
-        .card { background: white; padding: 40px; border-radius: 8px; width: 420px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h2 { color: #2c3e50; }
-        select, input { width: 100%; padding: 10px; margin: 8px 0 16px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #2c3e50; color: white; border: none; border-radius: 4px; font-size: 1em; cursor: pointer; }
-        .error { color: red; font-size: 0.9em; }
-        a { color: #2c3e50; }
+        body{font-family:Arial,sans-serif;background:#f5f5f5;display:flex;justify-content:center;padding-top:60px;}
+        .card{background:white;padding:40px;border-radius:8px;width:440px;box-shadow:0 2px 10px rgba(0,0,0,0.1);}
+        h2{color:#2c3e50;}
+        select,input{width:100%;padding:10px;margin:8px 0 16px;border:1px solid #ddd;border-radius:4px;box-sizing:border-box;font-size:14px;}
+        button{width:100%;padding:12px;background:#2c3e50;color:white;border:none;border-radius:4px;font-size:1em;cursor:pointer;}
+        button:hover{background:#34495e;}
+        .error{color:red;font-size:0.9em;margin-bottom:12px;}
+        .info{background:#eaf3fb;border-left:3px solid #2c3e50;padding:10px;border-radius:4px;margin-bottom:16px;font-size:0.9em;color:#2c3e50;}
+        .nights-display{background:#d5f5e3;padding:10px;border-radius:4px;margin-bottom:16px;font-size:0.95em;color:#1e8449;display:none;}
+        a{color:#2c3e50;}
+        label{font-size:0.9em;color:#555;font-weight:bold;}
     </style>
 </head>
 <body>
 <div class="card">
     <h2>Book a Room</h2>
     <p th:if="${error}" class="error" th:text="${error}"></p>
-    <form method="post" action="/reservations/book">
+    <div class="info">Select your check-in and check-out dates. Nights will be calculated automatically.</div>
+
+    <form method="post" action="/reservations/book" onsubmit="return validateDates()">
         <label>Select Room</label>
         <select name="roomId" required>
+            <option value="">-- Choose a room --</option>
             <option th:each="room : ${rooms}"
                     th:value="${room.roomId}"
-                    th:text="${room.roomNumber + ' - ' + room.roomType + ' - Rs.' + room.pricePerNight}">
+                    th:text="${room.roomNumber + ' — ' + room.roomType + ' — Rs.' + room.pricePerNight + '/night'}">
             </option>
         </select>
+
         <label>Check-in Date</label>
-        <input type="date" name="checkIn" required/>
+        <input type="date" id="checkIn" name="checkIn"
+               th:min="${minDate}" required
+               onchange="calculateNights()"/>
+
         <label>Check-out Date</label>
-        <input type="date" name="checkOut" required/>
-        <label>Number of Nights</label>
-        <input type="number" name="nights" min="1" required/>
+        <input type="date" id="checkOut" name="checkOut"
+               th:min="${minDate}" required
+               onchange="calculateNights()"/>
+
+        <div class="nights-display" id="nightsDisplay"></div>
+
         <label>Number of Guests</label>
-        <input type="number" name="numberOfGuests" min="1" required/>
+        <input type="number" name="numberOfGuests" min="1" max="4" value="1" required/>
+
         <button type="submit">Confirm Booking</button>
     </form>
-    <br><a href="/guest/dashboard">Back to Dashboard</a>
+    <br>
+    <a href="/guest/dashboard">Back to Dashboard</a>
 </div>
+
+<script>
+    // Set minimum date to tomorrow
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().split('T')[0];
+    document.getElementById('checkIn').min = tomorrowStr;
+    document.getElementById('checkOut').min = tomorrowStr;
+
+    function calculateNights() {
+        const ci = document.getElementById('checkIn').value;
+        const co = document.getElementById('checkOut').value;
+        const display = document.getElementById('nightsDisplay');
+
+        if (ci && co) {
+            const d1 = new Date(ci);
+            const d2 = new Date(co);
+            const nights = Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+
+            if (nights > 0) {
+                display.style.display = 'block';
+                display.textContent = 'Duration: ' + nights + ' night(s)';
+                // Update checkout min to be at least 1 day after checkin
+                document.getElementById('checkOut').min = new Date(d1.getTime() + 86400000).toISOString().split('T')[0];
+            } else if (nights <= 0 && co) {
+                display.style.display = 'block';
+                display.style.background = '#fadbd8';
+                display.style.color = '#c0392b';
+                display.textContent = 'Check-out must be after check-in.';
+            }
+        }
+    }
+
+    function validateDates() {
+        const ci = new Date(document.getElementById('checkIn').value);
+        const co = new Date(document.getElementById('checkOut').value);
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        if (ci <= today) {
+            alert('Check-in date must be after today.');
+            return false;
+        }
+        if (co <= ci) {
+            alert('Check-out date must be after check-in date.');
+            return false;
+        }
+        return true;
+    }
+</script>
 </body>
 </html>

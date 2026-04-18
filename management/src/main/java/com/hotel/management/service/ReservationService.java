@@ -5,17 +5,15 @@ import com.hotel.management.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ReservationService {
 
-    @Autowired
-    private ReservationRepository reservationRepository;
-
-    @Autowired
-    private RoomRepository roomRepository;
+    @Autowired private ReservationRepository reservationRepository;
+    @Autowired private RoomRepository roomRepository;
 
     public List<Room> getAvailableRooms() {
         return roomRepository.findByStatus("AVAILABLE");
@@ -25,11 +23,14 @@ public class ReservationService {
         return roomRepository.findAll();
     }
 
-    public Reservation bookRoom(String guestId, String roomId,
-                                LocalDate checkIn, LocalDate checkOut,
-                                int nights, int numberOfGuests) {
+    public Reservation bookRoom(String guestId, String roomId, LocalDate checkIn,
+                                LocalDate checkOut, int numberOfGuests) {
         Room room = roomRepository.findById(roomId).orElse(null);
         if (room == null || !room.getStatus().equals("AVAILABLE")) return null;
+
+        // Auto-calculate nights from dates
+        int nights = (int) ChronoUnit.DAYS.between(checkIn, checkOut);
+        if (nights <= 0) return null;
 
         String id = "RES" + String.format("%03d", reservationRepository.count() + 1);
         Reservation res = new Reservation();
@@ -44,7 +45,6 @@ public class ReservationService {
 
         room.setStatus("RESERVED");
         roomRepository.save(room);
-
         return reservationRepository.save(res);
     }
 
@@ -61,10 +61,8 @@ public class ReservationService {
         if (opt.isEmpty()) return false;
         Reservation res = opt.get();
         if (!res.getStatus().equals("CONFIRMED")) return false;
-
         res.setStatus("CANCELLED");
         reservationRepository.save(res);
-
         Room room = roomRepository.findById(res.getRoomId()).orElse(null);
         if (room != null) { room.setStatus("AVAILABLE"); roomRepository.save(room); }
         return true;
@@ -75,10 +73,8 @@ public class ReservationService {
         if (opt.isEmpty()) return false;
         Reservation res = opt.get();
         if (!res.getStatus().equals("CONFIRMED")) return false;
-
         res.setStatus("CHECKED_IN");
         reservationRepository.save(res);
-
         Room room = roomRepository.findById(res.getRoomId()).orElse(null);
         if (room != null) { room.setStatus("OCCUPIED"); roomRepository.save(room); }
         return true;
@@ -89,10 +85,8 @@ public class ReservationService {
         if (opt.isEmpty()) return false;
         Reservation res = opt.get();
         if (!res.getStatus().equals("CHECKED_IN")) return false;
-
         res.setStatus("CHECKED_OUT");
         reservationRepository.save(res);
-
         Room room = roomRepository.findById(res.getRoomId()).orElse(null);
         if (room != null) { room.setStatus("CLEANING"); roomRepository.save(room); }
         return true;

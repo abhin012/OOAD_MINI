@@ -3,27 +3,51 @@
 <head>
     <title>My Reservations</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 40px; }
-        h2 { color: #2c3e50; }
-        .success { color: green; font-size: 0.9em; }
-        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        th { background: #2c3e50; color: white; padding: 12px; text-align: left; }
-        td { padding: 12px; border-bottom: 1px solid #eee; }
-        .btn-cancel { background: #c0392b; color: white; padding: 5px 12px; border: none; border-radius: 4px; cursor: pointer; }
-        .badge { padding: 4px 10px; border-radius: 12px; font-size: 0.8em; }
-        .CONFIRMED { background: #d5f5e3; color: #1e8449; }
-        .CANCELLED { background: #fadbd8; color: #c0392b; }
-        .CHECKED_IN { background: #d6eaf8; color: #1a5276; }
-        .CHECKED_OUT { background: #f0f0f0; color: #555; }
-        a { color: #2c3e50; }
+        body{font-family:Arial,sans-serif;background:#f5f5f5;padding:40px;}
+        h2{color:#2c3e50;}
+        .success{background:#d5f5e3;border-left:4px solid #1e8449;padding:10px 14px;border-radius:4px;color:#1e8449;margin-bottom:16px;}
+        .info{background:#eaf3fb;border-left:4px solid #2c3e50;padding:10px 14px;border-radius:4px;color:#2c3e50;margin-bottom:16px;font-size:0.9em;}
+        table{width:100%;border-collapse:collapse;background:white;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+        th{background:#2c3e50;color:white;padding:12px;text-align:left;}
+        td{padding:12px;border-bottom:1px solid #eee;vertical-align:middle;}
+        .CONFIRMED{background:#d5f5e3;color:#1e8449;padding:3px 8px;border-radius:10px;font-size:0.8em;}
+        .CANCELLED{background:#fadbd8;color:#c0392b;padding:3px 8px;border-radius:10px;font-size:0.8em;}
+        .CHECKED_IN{background:#d6eaf8;color:#1a5276;padding:3px 8px;border-radius:10px;font-size:0.8em;}
+        .CHECKED_OUT{background:#f0f0f0;color:#555;padding:3px 8px;border-radius:10px;font-size:0.8em;}
+        .CREATED{background:#fef9e7;color:#b7950b;padding:3px 8px;border-radius:10px;font-size:0.8em;}
+        .btn-cancel{background:#c0392b;color:white;padding:5px 12px;border:none;border-radius:4px;cursor:pointer;font-size:0.85em;}
+        .btn-invoice{background:#2c3e50;color:white;padding:5px 12px;border-radius:4px;text-decoration:none;font-size:0.85em;margin-left:4px;}
+        .btn-pay{background:#1e8449;color:white;padding:5px 12px;border-radius:4px;text-decoration:none;font-size:0.85em;margin-left:4px;}
+        .empty{background:white;padding:40px;text-align:center;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);color:#888;}
+        a{color:#2c3e50;}
     </style>
 </head>
 <body>
     <h2>My Reservations</h2>
-    <p th:if="${param.booked}" class="success">Booking confirmed! Reservation ID: <span th:text="${param.booked}"></span></p>
-    <table>
+
+    <div th:if="${param.booked}" class="success">
+        Booking confirmed! Reservation ID: <strong th:text="${param.booked}"></strong>.
+        Click <strong>Invoice</strong> to view and pay.
+    </div>
+
+    <div class="info">
+        To make a payment: click <strong>Invoice</strong> on your reservation, then click <strong>Pay Now</strong>.
+    </div>
+
+    <div th:if="${reservations.empty}" class="empty">
+        <p>No reservations yet.</p>
+        <a href="/reservations/book">Book a Room</a>
+    </div>
+
+    <table th:unless="${reservations.empty}">
         <tr>
-            <th>Reservation ID</th><th>Room</th><th>Check-in</th><th>Check-out</th><th>Nights</th><th>Status</th><th>Action</th>
+            <th>Reservation ID</th>
+            <th>Room</th>
+            <th>Check-in</th>
+            <th>Check-out</th>
+            <th>Nights</th>
+            <th>Status</th>
+            <th>Actions</th>
         </tr>
         <tr th:each="res : ${reservations}">
             <td th:text="${res.reservationId}"></td>
@@ -31,15 +55,21 @@
             <td th:text="${res.checkIn}"></td>
             <td th:text="${res.checkOut}"></td>
             <td th:text="${res.nights}"></td>
-            <td><span class="badge" th:classappend="${res.status}" th:text="${res.status}"></span></td>
+            <td><span th:classappend="${res.status}" th:text="${res.status}"></span></td>
             <td>
-                <form th:if="${res.status == 'CONFIRMED'}" method="post" action="/reservations/cancel" style="display:inline">
+                <form th:if="${res.status == 'CONFIRMED'}"
+                      method="post" action="/reservations/cancel" style="display:inline">
                     <input type="hidden" name="reservationId" th:value="${res.reservationId}"/>
-                    <button class="btn-cancel" type="submit">Cancel</button>
+                    <button class="btn-cancel" type="submit"
+                            onclick="return confirm('Cancel this reservation?')">Cancel</button>
                 </form>
+                <a th:href="@{/payments/invoice/{id}(id=${res.reservationId})}"
+                   class="btn-invoice">Invoice / Pay</a>
             </td>
         </tr>
     </table>
-    <br><a href="/guest/dashboard">Back to Dashboard</a>
+
+    <br>
+    <a href="/guest/dashboard">Back to Dashboard</a>
 </body>
 </html>
