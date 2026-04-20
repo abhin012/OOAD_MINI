@@ -1,33 +1,55 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Guest Login</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f5f5f5; display: flex; justify-content: center; padding-top: 80px; }
-        .card { background: white; padding: 40px; border-radius: 8px; width: 360px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h2 { color: #2c3e50; margin-bottom: 24px; }
-        input { width: 100%; padding: 10px; margin: 8px 0 16px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #2c3e50; color: white; border: none; border-radius: 4px; font-size: 1em; cursor: pointer; }
-        .error { color: red; font-size: 0.9em; margin-bottom: 12px; }
-        .success { color: green; font-size: 0.9em; margin-bottom: 12px; }
-        a { color: #2c3e50; }
-    </style>
+<title>Guest Login — VAKA Hotel</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#C9A84C;--gold-light:#E8C97A;--bg:#0A0A0A;--bg2:#141414;--bg3:#1C1C1C;--text:#F0EDE8;--muted:#6A6660;--border:rgba(201,168,76,0.15);--border2:rgba(240,237,232,0.08);--red:#E05555;--green:#4CAF7C}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(201,168,76,0.05) 0%,transparent 60%);pointer-events:none}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:48px;width:100%;max-width:420px}
+.logo{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;letter-spacing:0.35em;color:var(--gold);text-align:center;margin-bottom:6px}
+.sub{font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:40px}
+.gold-line{height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent);margin:0 0 36px}
+label{display:block;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+input{width:100%;padding:12px 16px;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;border-radius:4px;outline:none;transition:border-color 0.2s;margin-bottom:20px}
+input:focus{border-color:var(--gold)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;background:var(--gold);color:#0A0A0A;font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:0.15em;text-transform:uppercase;font-weight:500;border:none;border-radius:4px;cursor:pointer;transition:background 0.2s;margin-top:8px}
+.btn:hover{background:var(--gold-light)}
+.btn svg{width:15px;height:15px}
+.alert{padding:12px 16px;border-radius:4px;margin-bottom:24px;font-size:13px;display:flex;align-items:center;gap:10px}
+.alert svg{width:15px;height:15px;flex-shrink:0}
+.alert-err{background:rgba(224,85,85,0.1);border:1px solid rgba(224,85,85,0.25);color:var(--red)}
+.alert-ok{background:rgba(76,175,124,0.1);border:1px solid rgba(76,175,124,0.25);color:var(--green)}
+.footer{text-align:center;font-size:12px;color:var(--muted);margin-top:28px}
+.footer a{color:var(--gold);text-decoration:none}
+</style>
 </head>
 <body>
 <div class="card">
-    <h2>Guest Login</h2>
-    <p th:if="${error}" class="error" th:text="${error}"></p>
-    <p th:if="${param.registered}" class="success">Registered successfully! Please login.</p>
-    <form method="post" action="/guest/login">
-        <label>Email</label>
-        <input type="email" name="email" required/>
-        <label>Phone</label>
-        <input type="text" name="phone" required/>
-        <button type="submit">Login</button>
-    </form>
-    <br>
-    <p>New guest? <a href="/guest/register">Register here</a></p>
-    <p><a href="/">Back to home</a></p>
+  <div class="logo">VAKA</div>
+  <div class="sub">Guest Portal</div>
+  <div class="gold-line"></div>
+  <div th:if="${error}" class="alert alert-err">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span th:text="${error}"></span>
+  </div>
+  <div th:if="${param.registered}" class="alert alert-ok">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+    Registration successful — please sign in.
+  </div>
+  <form method="post" action="/guest/login">
+    <label>Email Address</label>
+    <input type="email" name="email" required/>
+    <label>Phone Number</label>
+    <input type="text" name="phone" required/>
+    <button class="btn" type="submit">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      Sign In
+    </button>
+  </form>
+  <div class="footer">New guest? <a href="/guest/register">Create account</a><br><br><a href="/">← Back to home</a></div>
 </div>
 </body>
 </html>

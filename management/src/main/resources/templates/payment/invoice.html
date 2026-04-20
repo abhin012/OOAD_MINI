@@ -1,38 +1,75 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Invoice</title>
-    <style>
-        body{font-family:Arial,sans-serif;background:#f5f5f5;padding:40px;}
-        .invoice{background:white;max-width:500px;margin:auto;padding:40px;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,0.1);}
-        h2{color:#2c3e50;border-bottom:2px solid #2c3e50;padding-bottom:10px;}
-        .row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;}
-        .row.total{font-weight:bold;font-size:1.1em;color:#2c3e50;border-top:2px solid #2c3e50;margin-top:8px;}
-        .paid{background:#d5f5e3;color:#1e8449;padding:4px 12px;border-radius:12px;}
-        .unpaid{background:#fadbd8;color:#c0392b;padding:4px 12px;border-radius:12px;}
-        .btn{display:inline-block;margin-top:20px;padding:12px 30px;background:#2c3e50;color:white;text-decoration:none;border-radius:4px;}
-        a{color:#2c3e50;}
-    </style>
+<title>Invoice — VAKA Hotel</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#C9A84C;--gold-light:#E8C97A;--bg:#0A0A0A;--bg2:#141414;--bg3:#1C1C1C;--text:#F0EDE8;--text2:#B8B4AE;--muted:#6A6660;--border:rgba(201,168,76,0.15);--border2:rgba(240,237,232,0.08);--red:#E05555;--green:#4CAF7C;--radius:4px}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:48px 40px}
+.back{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);text-decoration:none;margin-bottom:40px;transition:color 0.2s}
+.back:hover{color:var(--gold)}
+.back svg{width:14px;height:14px}
+.invoice-card{background:var(--bg2);border:1px solid var(--border);border-radius:4px;max-width:520px;overflow:hidden}
+.inv-header{background:var(--bg3);padding:28px 32px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.inv-hotel{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;letter-spacing:0.3em;color:var(--gold)}
+.inv-id{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted)}
+.inv-body{padding:32px}
+.inv-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border2);font-size:13px}
+.inv-row:last-of-type{border-bottom:none}
+.inv-row .lbl{color:var(--muted)}
+.inv-row .val{color:var(--text)}
+.inv-total{background:rgba(201,168,76,0.08);border:1px solid var(--border);border-radius:4px;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;margin:20px 0 24px}
+.inv-total .lbl{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold)}
+.inv-total .val{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:var(--gold)}
+.badge-paid{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:rgba(76,175,124,0.1);border:1px solid rgba(76,175,124,0.25);color:var(--green);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;border-radius:2px}
+.badge-unpaid{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:rgba(224,85,85,0.1);border:1px solid rgba(224,85,85,0.25);color:var(--red);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;border-radius:2px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:var(--gold);color:#0A0A0A;font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:0.15em;text-transform:uppercase;font-weight:500;border:none;border-radius:4px;cursor:pointer;text-decoration:none;transition:background 0.2s}
+.btn:hover{background:var(--gold-light)}
+.btn svg{width:14px;height:14px}
+</style>
 </head>
 <body>
-<div class="invoice">
-    <h2>Invoice — Grand Palace Hotel</h2>
-    <div class="row"><span>Invoice ID</span><span th:text="${invoice.invoiceId}"></span></div>
-    <div class="row"><span>Reservation</span><span th:text="${invoice.reservationId}"></span></div>
-    <div class="row"><span>Room</span><span th:text="${room != null ? room.roomNumber + ' - ' + room.roomType : '-'}"></span></div>
-    <div class="row"><span>Check-in</span><span th:text="${reservation != null ? reservation.checkIn : '-'}"></span></div>
-    <div class="row"><span>Check-out</span><span th:text="${reservation != null ? reservation.checkOut : '-'}"></span></div>
-    <div class="row"><span>Nights</span><span th:text="${reservation != null ? reservation.nights : '-'}"></span></div>
-    <div class="row"><span>Subtotal</span><span th:text="'Rs. ' + ${#numbers.formatDecimal(invoice.subtotal,1,2)}"></span></div>
-    <div class="row"><span>GST (18%)</span><span th:text="'Rs. ' + ${#numbers.formatDecimal(invoice.taxAmount,1,2)}"></span></div>
-    <div class="row total"><span>TOTAL</span><span th:text="'Rs. ' + ${#numbers.formatDecimal(invoice.totalAmount,1,2)}"></span></div>
-    <div class="row">
-        <span>Status</span>
-        <span th:if="${invoice.paid}" class="paid">PAID</span>
-        <span th:unless="${invoice.paid}" class="unpaid">UNPAID</span>
+<a class="back" href="/reservations/my">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+  My Reservations
+</a>
+
+<div class="invoice-card">
+  <div class="inv-header">
+    <div class="inv-hotel">VAKA</div>
+    <div class="inv-id" th:text="${invoice.invoiceId}"></div>
+  </div>
+  <div class="inv-body">
+    <div class="inv-row"><span class="lbl">Reservation</span><span class="val" th:text="${invoice.reservationId}"></span></div>
+    <div class="inv-row"><span class="lbl">Room</span><span class="val" th:text="${room != null ? room.roomNumber + ' — ' + room.roomType : '-'}"></span></div>
+    <div class="inv-row"><span class="lbl">Check-in</span><span class="val" th:text="${reservation != null ? reservation.checkIn : '-'}"></span></div>
+    <div class="inv-row"><span class="lbl">Check-out</span><span class="val" th:text="${reservation != null ? reservation.checkOut : '-'}"></span></div>
+    <div class="inv-row"><span class="lbl">Nights</span><span class="val" th:text="${reservation != null ? reservation.nights : '-'}"></span></div>
+    <div class="inv-row"><span class="lbl">Subtotal</span><span class="val" th:text="'Rs. ' + ${#numbers.formatDecimal(invoice.subtotal,1,2)}"></span></div>
+    <div class="inv-row"><span class="lbl">GST (18%)</span><span class="val" th:text="'Rs. ' + ${#numbers.formatDecimal(invoice.taxAmount,1,2)}"></span></div>
+
+    <div class="inv-total">
+      <span class="lbl">Total Amount</span>
+      <span class="val" th:text="'Rs. ' + ${#numbers.formatDecimal(invoice.totalAmount,1,2)}"></span>
     </div>
-    <a th:unless="${invoice.paid}" th:href="@{/payments/pay/{id}(id=${invoice.invoiceId})}" class="btn">Pay Now</a>
-    <br><br><a href="/guest/dashboard">Back to Dashboard</a>
+
+    <div class="inv-row">
+      <span class="lbl">Payment Status</span>
+      <span th:if="${invoice.paid}" class="badge-paid">
+        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        Paid
+      </span>
+      <span th:unless="${invoice.paid}" class="badge-unpaid">Unpaid</span>
+    </div>
+
+    <div style="margin-top:28px" th:unless="${invoice.paid}">
+      <a th:href="@{/payments/pay/{id}(id=${invoice.invoiceId})}" class="btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        Pay Now
+      </a>
+    </div>
+  </div>
 </div>
 </body>
 </html>

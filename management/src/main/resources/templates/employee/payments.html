@@ -1,35 +1,64 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>All Payments</title>
-    <style>
-        body{font-family:Arial,sans-serif;background:#f5f5f5;padding:40px;}
-        h2{color:#2c3e50;}
-        table{width:100%;border-collapse:collapse;background:white;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
-        th{background:#2c3e50;color:white;padding:12px;text-align:left;}
-        td{padding:12px;border-bottom:1px solid #eee;}
-        .paid{background:#d5f5e3;color:#1e8449;padding:4px 10px;border-radius:12px;font-size:0.85em;}
-        .unpaid{background:#fadbd8;color:#c0392b;padding:4px 10px;border-radius:12px;font-size:0.85em;}
-        a{color:#2c3e50;}
-    </style>
+<title>Payments — VAKA Hotel</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#C9A84C;--bg:#0A0A0A;--bg2:#141414;--bg3:#1C1C1C;--text:#F0EDE8;--text2:#B8B4AE;--muted:#6A6660;--border:rgba(201,168,76,0.15);--border2:rgba(240,237,232,0.08);--red:#E05555;--green:#4CAF7C}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:48px 40px}
+.back{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);text-decoration:none;margin-bottom:40px;transition:color 0.2s}
+.back:hover{color:var(--gold)}
+.back svg{width:14px;height:14px}
+.title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;letter-spacing:0.08em;margin-bottom:32px}
+.table-wrap{border:1px solid var(--border2);border-radius:4px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th{background:var(--bg3);padding:12px 16px;text-align:left;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);font-weight:500;border-bottom:1px solid var(--border2)}
+td{padding:14px 16px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(201,168,76,0.02);color:var(--text)}
+.badge{display:inline-block;padding:3px 10px;border-radius:2px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;font-weight:500}
+.b-green{background:rgba(76,175,124,0.1);color:var(--green);border:1px solid rgba(76,175,124,0.2)}
+.b-red{background:rgba(224,85,85,0.1);color:var(--red);border:1px solid rgba(224,85,85,0.2)}
+.empty{text-align:center;padding:80px 20px;color:var(--muted)}
+.empty svg{width:48px;height:48px;margin:0 auto 16px;display:block;opacity:0.25}
+</style>
 </head>
 <body>
-    <h2>All Invoices and Payments</h2>
-    <table>
-        <tr><th>Invoice ID</th><th>Reservation</th><th>Subtotal</th><th>Tax</th><th>Total</th><th>Date</th><th>Status</th></tr>
-        <tr th:each="inv : ${invoices}">
-            <td th:text="${inv.invoiceId}"></td>
-            <td th:text="${inv.reservationId}"></td>
-            <td th:text="'Rs. ' + ${#numbers.formatDecimal(inv.subtotal,1,2)}"></td>
-            <td th:text="'Rs. ' + ${#numbers.formatDecimal(inv.taxAmount,1,2)}"></td>
-            <td th:text="'Rs. ' + ${#numbers.formatDecimal(inv.totalAmount,1,2)}"></td>
-            <td th:text="${inv.issueDate}"></td>
-            <td>
-                <span th:if="${inv.paid}" class="paid">PAID</span>
-                <span th:unless="${inv.paid}" class="unpaid">UNPAID</span>
-            </td>
-        </tr>
-    </table>
-    <br><a href="/employee/dashboard">Back to Dashboard</a>
+<a class="back" href="/employee/dashboard">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+  Dashboard
+</a>
+<div class="title">All Invoices &amp; Payments</div>
+
+<div th:if="${invoices.empty}" class="empty">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+  <p>No invoices yet.</p>
+</div>
+
+<div class="table-wrap" th:unless="${invoices.empty}">
+  <table>
+    <thead>
+      <tr>
+        <th>Invoice ID</th><th>Reservation</th><th>Subtotal</th>
+        <th>GST (18%)</th><th>Total</th><th>Date</th><th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="inv : ${invoices}">
+        <td th:text="${inv.invoiceId}" style="color:var(--gold);font-weight:500"></td>
+        <td th:text="${inv.reservationId}"></td>
+        <td th:text="'Rs. ' + ${#numbers.formatDecimal(inv.subtotal,1,2)}"></td>
+        <td th:text="'Rs. ' + ${#numbers.formatDecimal(inv.taxAmount,1,2)}"></td>
+        <td th:text="'Rs. ' + ${#numbers.formatDecimal(inv.totalAmount,1,2)}" style="font-weight:500;color:var(--text)"></td>
+        <td th:text="${inv.issueDate}"></td>
+        <td>
+          <span th:if="${inv.paid}" class="badge b-green">Paid</span>
+          <span th:unless="${inv.paid}" class="badge b-red">Unpaid</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 </body>
 </html>

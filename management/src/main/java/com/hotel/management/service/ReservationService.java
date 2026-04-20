@@ -28,7 +28,6 @@ public class ReservationService {
         Room room = roomRepository.findById(roomId).orElse(null);
         if (room == null || !room.getStatus().equals("AVAILABLE")) return null;
 
-        // Auto-calculate nights from dates
         int nights = (int) ChronoUnit.DAYS.between(checkIn, checkOut);
         if (nights <= 0) return null;
 
@@ -88,7 +87,8 @@ public class ReservationService {
         res.setStatus("CHECKED_OUT");
         reservationRepository.save(res);
         Room room = roomRepository.findById(res.getRoomId()).orElse(null);
-        if (room != null) { room.setStatus("CLEANING"); roomRepository.save(room); }
+        // Room goes back to AVAILABLE after checkout
+        if (room != null) { room.setStatus("AVAILABLE"); roomRepository.save(room); }
         return true;
     }
 

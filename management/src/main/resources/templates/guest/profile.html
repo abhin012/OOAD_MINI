@@ -1,27 +1,42 @@
+<!-- ═══════════════════════════════════════════════════════════
+     FILE: src/main/resources/templates/guest/profile.html
+═══════════════════════════════════════════════════════════ -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>My Profile</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 40px; }
-        .card { background: white; padding: 30px; border-radius: 8px; max-width: 400px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        h2 { color: #2c3e50; }
-        .field { margin: 12px 0; }
-        .label { color: #888; font-size: 0.85em; }
-        .value { font-size: 1em; color: #2c3e50; font-weight: bold; }
-        a { color: #2c3e50; }
-    </style>
+<title>My Profile — VAKA Hotel</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#C9A84C;--bg:#0A0A0A;--bg2:#141414;--bg3:#1C1C1C;--text:#F0EDE8;--text2:#B8B4AE;--muted:#6A6660;--border:rgba(201,168,76,0.15);--border2:rgba(240,237,232,0.08);--radius:4px}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:48px 40px}
+.back{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);text-decoration:none;margin-bottom:40px;transition:color 0.2s}
+.back:hover{color:var(--gold)}
+.back svg{width:14px;height:14px}
+.title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;letter-spacing:0.08em;color:var(--text);margin-bottom:32px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:40px;max-width:460px}
+.avatar{width:72px;height:72px;background:rgba(201,168,76,0.12);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:28px}
+.avatar svg{width:32px;height:32px;color:var(--gold)}
+.field{margin-bottom:24px}
+.field-label{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.field-value{font-size:15px;color:var(--text)}
+.gold-line{height:1px;background:linear-gradient(to right,var(--gold),transparent);margin:28px 0}
+</style>
 </head>
 <body>
+<a class="back" href="/guest/dashboard">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+  Dashboard
+</a>
+<div class="title">My Profile</div>
 <div class="card">
-    <h2>My Profile</h2>
-    <div class="field"><div class="label">Guest ID</div><div class="value" th:text="${guest.guestId}"></div></div>
-    <div class="field"><div class="label">Full Name</div><div class="value" th:text="${guest.fullName}"></div></div>
-    <div class="field"><div class="label">Email</div><div class="value" th:text="${guest.email}"></div></div>
-    <div class="field"><div class="label">Phone</div><div class="value" th:text="${guest.phone}"></div></div>
-    <div class="field"><div class="label">ID Proof</div><div class="value" th:text="${guest.idProof}"></div></div>
-    <br>
-    <a href="/guest/dashboard">Back to Dashboard</a>
+  <div class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+  <div class="field"><div class="field-label">Guest ID</div><div class="field-value" th:text="${guest.guestId}"></div></div>
+  <div class="gold-line"></div>
+  <div class="field"><div class="field-label">Full Name</div><div class="field-value" th:text="${guest.fullName}"></div></div>
+  <div class="field"><div class="field-label">Email Address</div><div class="field-value" th:text="${guest.email}"></div></div>
+  <div class="field"><div class="field-label">Phone Number</div><div class="field-value" th:text="${guest.phone}"></div></div>
+  <div class="field"><div class="field-label">ID Proof</div><div class="field-value" th:text="${guest.idProof}"></div></div>
 </div>
 </body>
 </html>

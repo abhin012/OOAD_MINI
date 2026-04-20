@@ -1,75 +1,111 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>My Reservations</title>
-    <style>
-        body{font-family:Arial,sans-serif;background:#f5f5f5;padding:40px;}
-        h2{color:#2c3e50;}
-        .success{background:#d5f5e3;border-left:4px solid #1e8449;padding:10px 14px;border-radius:4px;color:#1e8449;margin-bottom:16px;}
-        .info{background:#eaf3fb;border-left:4px solid #2c3e50;padding:10px 14px;border-radius:4px;color:#2c3e50;margin-bottom:16px;font-size:0.9em;}
-        table{width:100%;border-collapse:collapse;background:white;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
-        th{background:#2c3e50;color:white;padding:12px;text-align:left;}
-        td{padding:12px;border-bottom:1px solid #eee;vertical-align:middle;}
-        .CONFIRMED{background:#d5f5e3;color:#1e8449;padding:3px 8px;border-radius:10px;font-size:0.8em;}
-        .CANCELLED{background:#fadbd8;color:#c0392b;padding:3px 8px;border-radius:10px;font-size:0.8em;}
-        .CHECKED_IN{background:#d6eaf8;color:#1a5276;padding:3px 8px;border-radius:10px;font-size:0.8em;}
-        .CHECKED_OUT{background:#f0f0f0;color:#555;padding:3px 8px;border-radius:10px;font-size:0.8em;}
-        .CREATED{background:#fef9e7;color:#b7950b;padding:3px 8px;border-radius:10px;font-size:0.8em;}
-        .btn-cancel{background:#c0392b;color:white;padding:5px 12px;border:none;border-radius:4px;cursor:pointer;font-size:0.85em;}
-        .btn-invoice{background:#2c3e50;color:white;padding:5px 12px;border-radius:4px;text-decoration:none;font-size:0.85em;margin-left:4px;}
-        .btn-pay{background:#1e8449;color:white;padding:5px 12px;border-radius:4px;text-decoration:none;font-size:0.85em;margin-left:4px;}
-        .empty{background:white;padding:40px;text-align:center;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);color:#888;}
-        a{color:#2c3e50;}
-    </style>
+<title>My Reservations — VAKA Hotel</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#C9A84C;--gold-light:#E8C97A;--bg:#0A0A0A;--bg2:#141414;--bg3:#1C1C1C;--text:#F0EDE8;--text2:#B8B4AE;--muted:#6A6660;--border:rgba(201,168,76,0.15);--border2:rgba(240,237,232,0.08);--red:#E05555;--green:#4CAF7C;--blue:#5B9BD5;--amber:#E0A030;--radius:4px}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:48px 40px}
+.back{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);text-decoration:none;margin-bottom:40px;transition:color 0.2s}
+.back:hover{color:var(--gold)}
+.back svg{width:14px;height:14px}
+.title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;letter-spacing:0.08em;margin-bottom:36px}
+.alert{padding:14px 18px;border-radius:4px;margin-bottom:24px;font-size:13px;display:flex;align-items:center;gap:10px}
+.alert svg{width:15px;height:15px;flex-shrink:0}
+.alert-ok{background:rgba(76,175,124,0.1);border:1px solid rgba(76,175,124,0.25);color:var(--green)}
+.alert-info{background:rgba(201,168,76,0.08);border:1px solid var(--border);color:var(--gold)}
+.table-wrap{border:1px solid var(--border2);border-radius:4px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th{background:var(--bg3);padding:12px 16px;text-align:left;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);font-weight:500;border-bottom:1px solid var(--border2)}
+td{padding:14px 16px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(201,168,76,0.02);color:var(--text)}
+.badge{display:inline-block;padding:3px 10px;border-radius:2px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;font-weight:500}
+.b-green{background:rgba(76,175,124,0.1);color:var(--green);border:1px solid rgba(76,175,124,0.2)}
+.b-red{background:rgba(224,85,85,0.1);color:var(--red);border:1px solid rgba(224,85,85,0.2)}
+.b-blue{background:rgba(91,155,213,0.1);color:var(--blue);border:1px solid rgba(91,155,213,0.2)}
+.b-muted{background:rgba(106,102,96,0.1);color:var(--muted);border:1px solid rgba(106,102,96,0.2)}
+.b-amber{background:rgba(224,160,48,0.1);color:var(--amber);border:1px solid rgba(224,160,48,0.2)}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;cursor:pointer;border-radius:2px;transition:all 0.2s;font-weight:500;border:1px solid}
+.btn-gold{background:var(--gold);color:#0A0A0A;border-color:var(--gold)}
+.btn-gold:hover{background:var(--gold-light);border-color:var(--gold-light)}
+.btn-outline{background:transparent;color:var(--text2);border-color:var(--border2)}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+.btn-danger{background:transparent;color:var(--red);border-color:rgba(224,85,85,0.3)}
+.btn-danger:hover{background:rgba(224,85,85,0.08)}
+.btn svg{width:13px;height:13px}
+.empty{text-align:center;padding:80px 20px;color:var(--muted)}
+.empty svg{width:48px;height:48px;margin:0 auto 16px;display:block;opacity:0.25}
+.empty a{color:var(--gold);text-decoration:none;font-size:13px}
+</style>
 </head>
 <body>
-    <h2>My Reservations</h2>
+<a class="back" href="/guest/dashboard">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+  Dashboard
+</a>
+<div class="title">My Reservations</div>
 
-    <div th:if="${param.booked}" class="success">
-        Booking confirmed! Reservation ID: <strong th:text="${param.booked}"></strong>.
-        Click <strong>Invoice</strong> to view and pay.
-    </div>
+<div th:if="${param.booked}" class="alert alert-ok">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+  Booking confirmed — Reservation ID: <strong th:text="${param.booked}"></strong>. Click Invoice/Pay to complete payment.
+</div>
 
-    <div class="info">
-        To make a payment: click <strong>Invoice</strong> on your reservation, then click <strong>Pay Now</strong>.
-    </div>
+<div class="alert alert-info">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+  To pay: click <strong>Invoice / Pay</strong> on your reservation, then click <strong>Pay Now</strong>.
+</div>
 
-    <div th:if="${reservations.empty}" class="empty">
-        <p>No reservations yet.</p>
-        <a href="/reservations/book">Book a Room</a>
-    </div>
+<div th:if="${reservations.empty}" class="empty">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+  <p style="margin-bottom:16px">No reservations yet.</p>
+  <a href="/reservations/book">Book your first room →</a>
+</div>
 
-    <table th:unless="${reservations.empty}">
-        <tr>
-            <th>Reservation ID</th>
-            <th>Room</th>
-            <th>Check-in</th>
-            <th>Check-out</th>
-            <th>Nights</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
-        <tr th:each="res : ${reservations}">
-            <td th:text="${res.reservationId}"></td>
-            <td th:text="${res.roomId}"></td>
-            <td th:text="${res.checkIn}"></td>
-            <td th:text="${res.checkOut}"></td>
-            <td th:text="${res.nights}"></td>
-            <td><span th:classappend="${res.status}" th:text="${res.status}"></span></td>
-            <td>
-                <form th:if="${res.status == 'CONFIRMED'}"
-                      method="post" action="/reservations/cancel" style="display:inline">
-                    <input type="hidden" name="reservationId" th:value="${res.reservationId}"/>
-                    <button class="btn-cancel" type="submit"
-                            onclick="return confirm('Cancel this reservation?')">Cancel</button>
-                </form>
-                <a th:href="@{/payments/invoice/{id}(id=${res.reservationId})}"
-                   class="btn-invoice">Invoice / Pay</a>
-            </td>
-        </tr>
-    </table>
-
-    <br>
-    <a href="/guest/dashboard">Back to Dashboard</a>
+<div class="table-wrap" th:unless="${reservations.empty}">
+  <table>
+    <thead>
+      <tr>
+        <th>Reservation ID</th><th>Room</th><th>Check-in</th><th>Check-out</th>
+        <th>Nights</th><th>Status</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="res : ${reservations}">
+        <td th:text="${res.reservationId}" style="color:var(--gold);font-weight:500"></td>
+        <td th:text="${res.roomId}"></td>
+        <td th:text="${res.checkIn}"></td>
+        <td th:text="${res.checkOut}"></td>
+        <td th:text="${res.nights}"></td>
+        <td>
+          <span th:switch="${res.status}">
+            <span th:case="'CONFIRMED'" class="badge b-green">Confirmed</span>
+            <span th:case="'CHECKED_IN'" class="badge b-blue">Checked In</span>
+            <span th:case="'CHECKED_OUT'" class="badge b-muted">Checked Out</span>
+            <span th:case="'CANCELLED'" class="badge b-red">Cancelled</span>
+            <span th:case="*" class="badge b-amber" th:text="${res.status}"></span>
+          </span>
+        </td>
+        <td>
+          <div class="actions">
+            <form th:if="${res.status == 'CONFIRMED'}" method="post" action="/reservations/cancel" style="display:inline">
+              <input type="hidden" name="reservationId" th:value="${res.reservationId}"/>
+              <button class="btn btn-danger" type="submit" onclick="return confirm('Cancel this reservation?')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Cancel
+              </button>
+            </form>
+            <a th:href="@{/payments/invoice/{id}(id=${res.reservationId})}" class="btn btn-gold">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+              Invoice / Pay
+            </a>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 </body>
 </html>
